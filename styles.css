@@ -125,6 +125,16 @@ button {
     flex-grow: 1;
 }
 
+.algorithm-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Adjust the gap as needed */
+}
+
+.algorithm-buttons button {
+    margin: 0 10px; /* Adjust the margin as needed */
+}
+
 .algorithm-btn.active {
     background-color: #007bff;
     color: white;
@@ -137,6 +147,7 @@ button {
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-bottom: 10px;
 }
 
 .actions {

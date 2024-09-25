@@ -82,7 +82,7 @@ canvas.addEventListener("mousemove", (e) => {
         ctx.moveTo(start.col * gridSize + gridSize / 2, start.row * gridSize + gridSize / 2);
         ctx.lineTo(current.col * gridSize + gridSize / 2, current.row * gridSize + gridSize / 2);
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 1;  // Tenká čára
+        ctx.lineWidth = 1;
         ctx.stroke();
     }
 });
@@ -122,25 +122,6 @@ function onDrop(e) {
     }
 }
 
-let shortestPath = null;
-let realisticPath = null;
-
-document.getElementById("planFiber").addEventListener("click", () => {
-    if (startFiber && endFiber) {
-        shortestPath = findPath(startFiber, endFiber);
-        realisticPath = findRealisticPath(startFiber, endFiber);
-        if (!shortestPath) {
-            alert("Nelze najít nejkratší trasu.");
-        }
-        if (!realisticPath) {
-            alert("Nelze najít realistickou trasu.");
-        }
-        redraw();
-    } else {
-        alert("Musíte umístit začátek a konec vlákna.");
-    }
-});
-
 // Překreslení canvasu
 function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -164,176 +145,6 @@ function redraw() {
         ctx.fillStyle = "red";
         ctx.fillRect(endFiber.col * gridSize, endFiber.row * gridSize, gridSize, gridSize);
     }
-    // Vykreslení nejkratší trasy
-    if (shortestPath) {
-        drawPath(shortestPath, "green");
-    }
-    // Vykreslení realistické trasy
-    if (realisticPath) {
-        drawPath(realisticPath, "blue");
-    }
-}
-
-// Překreslení canvasu
-function redraw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid();
-
-    // Vykreslení stěn
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            if (grid[r][c] === 1) {
-                ctx.fillStyle = 'black';
-                ctx.fillRect(c * gridSize, r * gridSize, gridSize, gridSize);
-            }
-        }
-    }
-    // Vykreslení začátku a konce vlákna
-    if (startFiber) {
-        ctx.fillStyle = "blue";
-        ctx.fillRect(startFiber.col * gridSize, startFiber.row * gridSize, gridSize, gridSize);
-    }
-    if (endFiber) {
-        ctx.fillStyle = "red";
-        ctx.fillRect(endFiber.col * gridSize, endFiber.row * gridSize, gridSize, gridSize);
-    }
-}
-
-// A* algoritmus pro nalezení nejkratší cesty
-function findPath(start, end) {
-    const openSet = [start];
-    const closedSet = [];
-    const cameFrom = {};
-    const gScore = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
-    const fScore = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
-
-    gScore[start.row][start.col] = 0;
-    fScore[start.row][start.col] = heuristic(start, end);
-
-    while (openSet.length > 0) {
-        let current = openSet.reduce((a, b) => (fScore[a.row][a.col] < fScore[b.row][b.col] ? a : b));
-
-        if (current.row === end.row && current.col === end.col) {
-            return reconstructPath(cameFrom, current);
-        }
-
-        openSet.splice(openSet.indexOf(current), 1);
-        closedSet.push(current);
-
-        getNeighbors(current).forEach(neighbor => {
-            if (closedSet.find(n => n.row === neighbor.row && n.col === neighbor.col)) return;
-
-            let tentative_gScore = gScore[current.row][current.col] + 1;
-
-            if (!openSet.find(n => n.row === neighbor.row && n.col === neighbor.col)) {
-                openSet.push(neighbor);
-            } else if (tentative_gScore >= gScore[neighbor.row][neighbor.col]) {
-                return;
-            }
-
-            cameFrom[`${neighbor.row},${neighbor.col}`] = current;
-            gScore[neighbor.row][neighbor.col] = tentative_gScore;
-            fScore[neighbor.row][neighbor.col] = gScore[neighbor.row][neighbor.col] + heuristic(neighbor, end);
-        });
-    }
-
-    return null;
-}
-
-function reconstructPath(cameFrom, current) {
-    let totalPath = [current];
-    while (`${current.row},${current.col}` in cameFrom) {
-        current = cameFrom[`${current.row},${current.col}`];
-        totalPath.push(current);
-    }
-    return totalPath.reverse();
-}
-
-function heuristic(a, b) {
-    return Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
-}
-
-function getNeighbors(node) {
-    const neighbors = [];
-    const dirs = [
-        { row: -1, col: 0 }, { row: 1, col: 0 },
-        { row: 0, col: -1 }, { row: 0, col: 1 }
-    ];
-    dirs.forEach(dir => {
-        const neighbor = { row: node.row + dir.row, col: node.col + dir.col };
-        if (neighbor.row >= 0 && neighbor.row < rows && neighbor.col >= 0 && neighbor.col < cols && grid[neighbor.row][neighbor.col] === 0) {
-            neighbors.push(neighbor);
-        }
-    });
-    return neighbors;
-}
-
-function drawPath(path, color) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;  // Tenká čára pro optické vlákno
-    ctx.beginPath();
-    ctx.moveTo(path[0].col * gridSize + gridSize / 2, path[0].row * gridSize + gridSize / 2);
-
-    for (let i = 1; i < path.length; i++) {
-        ctx.lineTo(path[i].col * gridSize + gridSize / 2, path[i].row * gridSize + gridSize / 2);
-    }
-
-    ctx.stroke();
-}
-
-// Funkce pro nalezení realistické cesty podél stěn
-function findRealisticPath(start, end) {
-    // Implementace algoritmu pro realistickou trasu podél stěn
-    // Tento algoritmus by měl zohlednit stěny a pokusit se najít cestu, která je co nejkratší, ale sleduje stěny
-    // Pro jednoduchost zde použijeme stejný A* algoritmus, ale s jinou heuristikou nebo úpravou, aby preferoval cesty podél stěn
-
-    // Příklad jednoduché úpravy heuristiky:
-    function heuristicWithWalls(a, b) {
-        // Preferovat cesty podél stěn
-        let wallPenalty = 0;
-        if (grid[a.row][a.col] === 1) wallPenalty += 10;
-        if (grid[b.row][b.col] === 1) wallPenalty += 10;
-        return Math.abs(a.row - b.row) + Math.abs(a.col - b.col) + wallPenalty;
-    }
-
-    // Zbytek kódu je podobný jako ve funkci findPath, ale používá heuristicWithWalls místo heuristic
-    const openSet = [start];
-    const closedSet = [];
-    const cameFrom = {};
-    const gScore = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
-    const fScore = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
-
-    gScore[start.row][start.col] = 0;
-    fScore[start.row][start.col] = heuristicWithWalls(start, end);
-
-    while (openSet.length > 0) {
-        let current = openSet.reduce((a, b) => (fScore[a.row][a.col] < fScore[b.row][b.col] ? a : b));
-
-        if (current.row === end.row && current.col === end.col) {
-            return reconstructPath(cameFrom, current);
-        }
-
-        openSet.splice(openSet.indexOf(current), 1);
-        closedSet.push(current);
-
-        getNeighbors(current).forEach(neighbor => {
-            if (closedSet.find(n => n.row === neighbor.row && n.col === neighbor.col)) return;
-
-            let tentative_gScore = gScore[current.row][current.col] + 1;
-
-            if (!openSet.find(n => n.row === neighbor.row && n.col === neighbor.col)) {
-                openSet.push(neighbor);
-            } else if (tentative_gScore >= gScore[neighbor.row][neighbor.col]) {
-                return;
-            }
-
-            cameFrom[`${neighbor.row},${neighbor.col}`] = current;
-            gScore[neighbor.row][neighbor.col] = tentative_gScore;
-            fScore[neighbor.row][neighbor.col] = gScore[neighbor.row][neighbor.col] + heuristicWithWalls(neighbor, end);
-        });
-    }
-
-    return null;  // Nelze najít realistickou trasu
 }
 
 // Inicializace mřížky a vykreslení
@@ -341,31 +152,22 @@ initializeGrid();
 
 // Funkce pro přepínání aktivního tlačítka
 function setActiveButton(button) {
-    // Najdi všechna tlačítka s třídou 'algorithm-btn'
     const buttons = document.querySelectorAll('.algorithm-btn');
     
-    // Odstraň třídu 'active' ze všech tlačítek
     buttons.forEach(btn => btn.classList.remove('active'));
 
-    // Přidej třídu 'active' pouze na kliknuté tlačítko
     button.classList.add('active');
 }
 
 // Přidání událostí pro jednotlivá tlačítka algoritmů
 document.getElementById("both").addEventListener("click", function() {
     setActiveButton(this);
-    // Logika pro obě trasy
-    console.log("Vybrána obě trasy");
 });
 
 document.getElementById("shortestPathBtn").addEventListener("click", function() {
     setActiveButton(this);
-    // Logika pro nejkratší trasu
-    console.log("Vybrána nejkratší trasa");
 });
 
 document.getElementById("realisticPathBtn").addEventListener("click", function() {
     setActiveButton(this);
-    // Logika pro realistickou trasu
-    console.log("Vybrána realistická trasa");
 });
