@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kreslení půdorysu a plánování optického vlákna</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Kreslení půdorysu a plánování optického vlákna</h1>
+<p>Pomocí myši nakreslete stěny a přetáhněte začátek a konec vlákna na plátno.</p>
+
+<div class="toolbox">
+    <div class="draggable" id="startFiber" draggable="true">Začátek vlákna</div>
+    <div class="draggable" id="endFiber" draggable="true">Konec vlákna</div>
+</div>
+
+<canvas id="canvas" width="800" height="600"></canvas>
+<div>
+    <button id="planFiber">Naplánovat optické vlákno</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
