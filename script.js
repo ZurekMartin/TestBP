@@ -338,3 +338,34 @@ function findRealisticPath(start, end) {
 
 // Inicializace mřížky a vykreslení
 initializeGrid();
+
+// Funkce pro přepínání aktivního tlačítka
+function setActiveButton(button) {
+    // Najdi všechna tlačítka s třídou 'algorithm-btn'
+    const buttons = document.querySelectorAll('.algorithm-btn');
+    
+    // Odstraň třídu 'active' ze všech tlačítek
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // Přidej třídu 'active' pouze na kliknuté tlačítko
+    button.classList.add('active');
+}
+
+// Přidání událostí pro jednotlivá tlačítka algoritmů
+document.getElementById("both").addEventListener("click", function() {
+    setActiveButton(this);
+    // Logika pro obě trasy
+    console.log("Vybrána obě trasy");
+});
+
+document.getElementById("shortestPathBtn").addEventListener("click", function() {
+    setActiveButton(this);
+    // Logika pro nejkratší trasu
+    console.log("Vybrána nejkratší trasa");
+});
+
+document.getElementById("realisticPathBtn").addEventListener("click", function() {
+    setActiveButton(this);
+    // Logika pro realistickou trasu
+    console.log("Vybrána realistická trasa");
+});
