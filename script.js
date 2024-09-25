@@ -1,7 +1,7 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const gridSize = 20;
+const gridSize = 10;
 const rows = canvas.height / gridSize;
 const cols = canvas.width / gridSize;
 

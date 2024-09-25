@@ -1,101 +1,152 @@
+/* Obecné styly */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
     color: #333;
-    text-align: center;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 header {
     background-color: #4CAF50;
-    padding: 20px;
     color: white;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
 }
 
 h1 {
     margin: 0;
+    font-size: 2rem;
 }
 
 main {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
     padding: 20px;
 }
 
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+}
+
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Levý panel s nápovědou */
 .instructions {
-    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
+.instructions h2 {
+    font-size: 1.5rem;
+    color: #4CAF50;
 }
 
-#showHelp {
-    background-color: #007BFF;
-    color: white;
+.instructions p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 10px 0;
 }
 
-#showHelp:hover {
-    background-color: #0056b3;
-}
-
-.btn-primary {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #218838;
-}
-
+/* Pravý panel s canvasem a nástroji */
 .canvas-container {
-    display: inline-block;
-    margin: 20px 0;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 canvas {
-    border: 2px solid #333;
-    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 20px;
 }
 
 .toolbox {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
 }
 
 .draggable {
-    display: inline-block;
-    padding: 10px;
-    background-color: #6c757d;
+    background-color: #4CAF50;
     color: white;
-    border-radius: 5px;
+    padding: 10px 15px;
+    border-radius: 4px;
     cursor: grab;
-    margin: 0 10px;
 }
 
-.draggable:active {
-    cursor: grabbing;
+.algorithm-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-footer {
-    margin-top: 40px;
-    background-color: #333;
+/* Styl tlačítek algoritmu */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
     color: white;
-    padding: 10px;
+    width: 100%;
 }
 
-.hidden {
-    display: none;
+.btn-secondary {
+    background-color: #ddd;
+    color: #333;
+    margin-right: 10px;
+    flex-grow: 1;
 }
 
-#helpText {
-    text-align: left;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
+.btn-secondary.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+}
+
+/* Pro mobilní zobrazení */
+@media screen and (max-width: 768px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+
+    .algorithm-buttons {
+        flex-direction: column;
+    }
+
+    .btn-secondary {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
 }
