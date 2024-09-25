@@ -1,12 +1,63 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
     text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #4CAF50;
+    padding: 20px;
+    color: white;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+}
+
+.instructions {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+#showHelp {
+    background-color: #007BFF;
+    color: white;
+}
+
+#showHelp:hover {
+    background-color: #0056b3;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+}
+
+.canvas-container {
+    display: inline-block;
+    margin: 20px 0;
 }
 
 canvas {
-    border: 1px solid black;
-    display: block;
-    margin: 20px auto;
+    border: 2px solid #333;
     background-color: #f0f0f0;
 }
 
@@ -17,14 +68,34 @@ canvas {
 .draggable {
     display: inline-block;
     padding: 10px;
-    background-color: #ccc;
-    border: 1px solid #999;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 5px;
     cursor: grab;
     margin: 0 10px;
 }
 
-button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
+.draggable:active {
+    cursor: grabbing;
+}
+
+footer {
+    margin-top: 40px;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+#helpText {
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
 }

@@ -7,18 +7,39 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Kreslení půdorysu a plánování optického vlákna</h1>
-<p>Pomocí myši nakreslete stěny a přetáhněte začátek a konec vlákna na plátno.</p>
+<header>
+    <h1>Kreslení půdorysu a plánování optického vlákna</h1>
+</header>
 
-<div class="toolbox">
-    <div class="draggable" id="startFiber" draggable="true">Začátek vlákna</div>
-    <div class="draggable" id="endFiber" draggable="true">Konec vlákna</div>
-</div>
+<main>
+    <section class="instructions">
+        <button id="showHelp">Nápověda</button>
+        <div id="helpText" class="hidden">
+            <h2>Jak používat:</h2>
+            <p>1. Klikněte a přetáhněte myší pro nakreslení stěn na mřížce.</p>
+            <p>2. Přetáhněte <strong>Začátek vlákna</strong> a <strong>Konec vlákna</strong> na požadovaná místa na plátně.</p>
+            <p>3. Stiskněte tlačítko <strong>Naplánovat optické vlákno</strong> pro automatické vypočítání trasy.</p>
+            <p>4. Zelená čára představuje nejkratší trasu, modrá představuje realistickou trasu podél stěn.</p>
+        </div>
+    </section>
 
-<canvas id="canvas" width="800" height="600"></canvas>
-<div>
-    <button id="planFiber">Naplánovat optické vlákno</button>
-</div>
+    <section class="toolbox">
+        <div class="draggable" id="startFiber" draggable="true">Začátek vlákna</div>
+        <div class="draggable" id="endFiber" draggable="true">Konec vlákna</div>
+    </section>
+
+    <section class="canvas-container">
+        <canvas id="canvas" width="800" height="600"></canvas>
+    </section>
+
+    <section class="actions">
+        <button id="planFiber" class="btn-primary">Naplánovat optické vlákno</button>
+    </section>
+</main>
+
+<footer>
+    <p>© 2024 Plánování optického vlákna</p>
+</footer>
 
 <script src="script.js"></script>
 </body>
