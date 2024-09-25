@@ -122,6 +122,90 @@ function onDrop(e) {
     }
 }
 
+// A* algoritmus pro nalezení nejkratší trasy
+function aStar(start, end) {
+    const openSet = [start];
+    const cameFrom = {};
+    const gScore = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
+    const fScore = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
+
+    gScore[start.row][start.col] = 0;
+    fScore[start.row][start.col] = heuristic(start, end);
+
+    while (openSet.length > 0) {
+        let current = openSet.reduce((prev, curr) => fScore[curr.row][curr.col] < fScore[prev.row][prev.col] ? curr : prev);
+
+        if (current.row === end.row && current.col === end.col) {
+            return reconstructPath(cameFrom, current);
+        }
+
+        openSet.splice(openSet.indexOf(current), 1);
+
+        for (let neighbor of getNeighbors(current)) {
+            let tentativeGScore = gScore[current.row][current.col] + 1;
+
+            if (tentativeGScore < gScore[neighbor.row][neighbor.col]) {
+                cameFrom[`${neighbor.row},${neighbor.col}`] = current;
+                gScore[neighbor.row][neighbor.col] = tentativeGScore;
+                fScore[neighbor.row][neighbor.col] = tentativeGScore + heuristic(neighbor, end);
+
+                if (!openSet.some(n => n.row === neighbor.row && n.col === neighbor.col)) {
+                    openSet.push(neighbor);
+                }
+            }
+        }
+    }
+    return null; // Trasa nebyla nalezena
+}
+
+// Pomocné funkce
+function heuristic(a, b) {
+    return Math.abs(a.row - b.row) + Math.abs(a.col - b.col); // Manhattan distance
+}
+
+function getNeighbors(node) {
+    const neighbors = [];
+    const directions = [
+        { row: -1, col: 0 }, // nahoru
+        { row: 1, col: 0 },  // dolů
+        { row: 0, col: -1 }, // vlevo
+        { row: 0, col: 1 },  // vpravo
+    ];
+
+    for (let dir of directions) {
+        const newRow = node.row + dir.row;
+        const newCol = node.col + dir.col;
+        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && grid[newRow][newCol] === 0) {
+            neighbors.push({ row: newRow, col: newCol });
+        }
+    }
+    return neighbors;
+}
+
+function reconstructPath(cameFrom, current) {
+    const path = [];
+    while (current) {
+        path.push(current);
+        current = cameFrom[`${current.row},${current.col}`];
+    }
+    return path.reverse();
+}
+
+// Vykreslení cesty
+function drawPath(path) {
+    if (path) {
+        for (let node of path) {
+            if (!(node.row === startFiber.row && node.col === startFiber.col) && 
+                !(node.row === endFiber.row && node.col === endFiber.col)) {
+                ctx.fillStyle = "green"; // Zelená čára pro trasu
+                ctx.fillRect(node.col * gridSize + gridSize / 4, node.row * gridSize + gridSize / 4, gridSize / 2, gridSize / 2);
+            }
+        }
+    } else {
+        alert("Nelze najít trasu!");
+    }
+}
+
 // Překreslení canvasu
 function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -136,6 +220,7 @@ function redraw() {
             }
         }
     }
+
     // Vykreslení začátku a konce vlákna
     if (startFiber) {
         ctx.fillStyle = "blue";
@@ -147,27 +232,15 @@ function redraw() {
     }
 }
 
+// Plánování trasy
+document.getElementById("planFiber").addEventListener("click", () => {
+    if (startFiber && endFiber) {
+        const path = aStar(startFiber, endFiber);
+        drawPath(path);
+    } else {
+        alert("Prosím, nastavte začátek a konec vlákna.");
+    }
+});
+
 // Inicializace mřížky a vykreslení
 initializeGrid();
-
-// Funkce pro přepínání aktivního tlačítka
-function setActiveButton(button) {
-    const buttons = document.querySelectorAll('.algorithm-btn');
-    
-    buttons.forEach(btn => btn.classList.remove('active'));
-
-    button.classList.add('active');
-}
-
-// Přidání událostí pro jednotlivá tlačítka algoritmů
-document.getElementById("both").addEventListener("click", function() {
-    setActiveButton(this);
-});
-
-document.getElementById("shortestPathBtn").addEventListener("click", function() {
-    setActiveButton(this);
-});
-
-document.getElementById("realisticPathBtn").addEventListener("click", function() {
-    setActiveButton(this);
-});

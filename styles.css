@@ -97,12 +97,6 @@ canvas {
     cursor: grab;
 }
 
-.algorithm-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
 /* Styl tlačítek algoritmu */
 button {
     padding: 10px 15px;
@@ -116,38 +110,6 @@ button {
     background-color: #4CAF50;
     color: white;
     width: 100%;
-}
-
-.btn-secondary {
-    background-color: #ddd;
-    color: #333;
-    margin-right: 10px;
-    flex-grow: 1;
-}
-
-.algorithm-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px; /* Adjust the gap as needed */
-}
-
-.algorithm-buttons button {
-    margin: 0 10px; /* Adjust the margin as needed */
-}
-
-.algorithm-btn.active {
-    background-color: #007bff;
-    color: white;
-    border: 2px solid #0056b3;
-}
-
-.algorithm-btn {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-bottom: 10px;
 }
 
 .actions {
