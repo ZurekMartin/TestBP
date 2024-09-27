@@ -93,6 +93,7 @@ function loadAndProcessImage(image) {
         img.onload = () => {
             const grayscaleData = convertToGrayscale(img);
             extractWallsFromImage(grayscaleData, 128); // Example threshold for wall detection
+            redraw(); // Redraw grid with detected walls after image is processed
         };
     };
     reader.readAsDataURL(image);
