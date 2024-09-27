@@ -91,6 +91,7 @@ function loadAndProcessImage(image) {
     reader.onload = (e) => {
         img.src = e.target.result;
         img.onload = () => {
+            redraw(); // Clear the canvas before processing the new image
             const grayscaleData = convertToGrayscale(img);
             extractWallsFromImage(grayscaleData, 128); // Example threshold for wall detection
             redraw(); // Redraw grid with detected walls after image is processed
