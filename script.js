@@ -13,13 +13,13 @@ let draggingElement = null;
 let startFiber = null;
 let endFiber = null;
 
-// Inicializace mřížky
+// Initialize grid
 function initializeGrid() {
     grid = Array.from({ length: rows }, () => Array(cols).fill(0));
     drawGrid();
 }
 
-// Vykreslení mřížky
+// Draw grid lines
 function drawGrid() {
     ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 0.5;
@@ -37,7 +37,34 @@ function drawGrid() {
     }
 }
 
-// Převod souřadnic na pozici v mřížce (přichytávání ke mřížce)
+// Convert image to grayscale
+function convertToGrayscale(image) {
+    let grayscaleData = [];
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data = imageData.data;
+    
+    for (let i = 0; i < data.length; i += 4) {
+        let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        grayscaleData.push(avg);
+    }
+    
+    return grayscaleData;
+}
+
+// Extract walls from the image using a threshold
+function extractWallsFromImage(grayscaleData, threshold) {
+    for (let i = 0; i < grayscaleData.length; i++) {
+        let col = i % canvas.width;
+        let row = Math.floor(i / canvas.width);
+        
+        if (grayscaleData[i] < threshold) {
+            addWallToGrid(col, row);
+        }
+    }
+}
+
+// Convert coordinates to grid positions
 function toGrid(x, y) {
     return {
         row: Math.floor(y / gridSize),
@@ -45,28 +72,41 @@ function toGrid(x, y) {
     };
 }
 
-// Přidání zdi do mřížky a kreslení zdi
-function addWallToGrid(x1, y1, x2, y2) {
-    let { row: row1, col: col1 } = toGrid(x1, y1);
-    let { row: row2, col: col2 } = toGrid(x2, y2);
-
-    let dx = Math.abs(col2 - col1), sx = col1 < col2 ? 1 : -1;
-    let dy = Math.abs(row2 - row1), sy = row1 < row2 ? 1 : -1;
-    let err = (dx > dy ? dx : -dy) / 2;
-
-    while (true) {
-        grid[row1][col1] = 1;  // Označit buňku jako zeď
+// Add wall to the grid
+function addWallToGrid(x, y) {
+    let { row, col } = toGrid(x, y);
+    
+    if (row >= 0 && row < rows && col >= 0 && col < cols) {
+        grid[row][col] = 1;
         ctx.fillStyle = 'black';
-        ctx.fillRect(col1 * gridSize, row1 * gridSize, gridSize, gridSize);
-
-        if (col1 === col2 && row1 === row2) break;
-        let e2 = err;
-        if (e2 > -dx) { err -= dy; col1 += sx; }
-        if (e2 < dy) { err += dx; row1 += sy; }
+        ctx.fillRect(col * gridSize, row * gridSize, gridSize, gridSize);
     }
 }
 
-// Události pro kreslení zdí
+// Load and process the uploaded floor plan image
+function loadAndProcessImage(image) {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        img.src = e.target.result;
+        img.onload = () => {
+            const grayscaleData = convertToGrayscale(img);
+            extractWallsFromImage(grayscaleData, 128); // Example threshold for wall detection
+        };
+    };
+    reader.readAsDataURL(image);
+}
+
+// Event listener for image upload
+document.getElementById('imageLoader').addEventListener('change', function (e) {
+    const imageFile = e.target.files[0];
+    if (imageFile) {
+        loadAndProcessImage(imageFile);
+    }
+});
+
+// Event listeners for manual wall drawing
 canvas.addEventListener("mousedown", (e) => {
     startX = e.offsetX;
     startY = e.offsetY;
@@ -94,7 +134,7 @@ canvas.addEventListener("mouseup", (e) => {
     }
 });
 
-// Drag-and-drop události
+// Drag-and-drop events for fiber start and end
 document.querySelectorAll('.draggable').forEach(item => {
     item.addEventListener('dragstart', onDragStart);
 });
@@ -122,7 +162,7 @@ function onDrop(e) {
     }
 }
 
-// A* algoritmus pro nalezení nejkratší trasy
+// A* algorithm for finding the shortest path
 function aStar(start, end) {
     const openSet = [start];
     const cameFrom = {};
@@ -155,10 +195,10 @@ function aStar(start, end) {
             }
         }
     }
-    return null; // Trasa nebyla nalezena
+    return null; // No path found
 }
 
-// Pomocné funkce
+// Helper functions
 function heuristic(a, b) {
     return Math.abs(a.row - b.row) + Math.abs(a.col - b.col); // Manhattan distance
 }
@@ -166,10 +206,10 @@ function heuristic(a, b) {
 function getNeighbors(node) {
     const neighbors = [];
     const directions = [
-        { row: -1, col: 0 }, // nahoru
-        { row: 1, col: 0 },  // dolů
-        { row: 0, col: -1 }, // vlevo
-        { row: 0, col: 1 },  // vpravo
+        { row: -1, col: 0 }, // up
+        { row: 1, col: 0 },  // down
+        { row: 0, col: -1 }, // left
+        { row: 0, col: 1 },  // right
     ];
 
     for (let dir of directions) {
@@ -191,13 +231,13 @@ function reconstructPath(cameFrom, current) {
     return path.reverse();
 }
 
-// Vykreslení cesty
+// Draw path
 function drawPath(path) {
     if (path) {
         for (let node of path) {
             if (!(node.row === startFiber.row && node.col === startFiber.col) && 
                 !(node.row === endFiber.row && node.col === endFiber.col)) {
-                ctx.fillStyle = "green"; // Zelená čára pro trasu
+                ctx.fillStyle = "green"; // Green path line
                 ctx.fillRect(node.col * gridSize + gridSize / 4, node.row * gridSize + gridSize / 4, gridSize / 2, gridSize / 2);
             }
         }
@@ -206,12 +246,12 @@ function drawPath(path) {
     }
 }
 
-// Překreslení canvasu
+// Redraw canvas
 function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid();
 
-    // Vykreslení stěn
+    // Draw walls
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             if (grid[r][c] === 1) {
@@ -221,26 +261,26 @@ function redraw() {
         }
     }
 
-    // Vykreslení začátku a konce vlákna
+    // Draw start and end fiber
     if (startFiber) {
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = 'blue';
         ctx.fillRect(startFiber.col * gridSize, startFiber.row * gridSize, gridSize, gridSize);
     }
     if (endFiber) {
-        ctx.fillStyle = "red";
+        ctx.fillStyle = 'red';
         ctx.fillRect(endFiber.col * gridSize, endFiber.row * gridSize, gridSize, gridSize);
     }
 }
 
-// Plánování trasy
-document.getElementById("planFiber").addEventListener("click", () => {
+// Fiber planning button event
+document.getElementById('planFiber').addEventListener('click', () => {
     if (startFiber && endFiber) {
         const path = aStar(startFiber, endFiber);
         drawPath(path);
     } else {
-        alert("Prosím, nastavte začátek a konec vlákna.");
+        alert("Nastavte začátek a konec vlákna.");
     }
 });
 
-// Inicializace mřížky a vykreslení
+// Initialize the grid on page load
 initializeGrid();
