@@ -130,8 +130,33 @@ canvas.addEventListener("mousemove", (e) => {
 
 canvas.addEventListener("mouseup", (e) => {
     if (drawing) {
-        addWallToGrid(startX, startY, e.offsetX, e.offsetY);
+        let start = toGrid(startX, startY);
+        let end = toGrid(e.offsetX, e.offsetY);
+
+        // Vykreslení stěny podél celé cesty
+        let deltaX = Math.abs(end.col - start.col);
+        let deltaY = Math.abs(end.row - start.row);
+        let signX = start.col < end.col ? 1 : -1;
+        let signY = start.row < end.row ? 1 : -1;
+
+        let err = deltaX - deltaY;
+
+        while (true) {
+            addWallToGrid(start.col * gridSize, start.row * gridSize);
+
+            if (start.col === end.col && start.row === end.row) break;
+            let err2 = 2 * err;
+            if (err2 > -deltaY) {
+                err -= deltaY;
+                start.col += signX;
+            }
+            if (err2 < deltaX) {
+                err += deltaX;
+                start.row += signY;
+            }
+        }
         drawing = false;
+        redraw();
     }
 });
 
