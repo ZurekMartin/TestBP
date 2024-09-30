@@ -12,6 +12,7 @@ let drawing = false;
 let draggingElement = null;
 let startFiber = null;
 let endFiber = null;
+let cursorMode = 'draw';
 
 // Initialize grid
 function initializeGrid() {
@@ -83,6 +84,16 @@ function addWallToGrid(x, y) {
     }
 }
 
+// Remove wall from the grid
+function removeWallFromGrid(x, y) {
+    let { row, col } = toGrid(x, y);
+    
+    if (row >= 0 && row < rows && col >= 0 && col < cols) {
+        grid[row][col] = 0;
+        ctx.clearRect(col * gridSize, row * gridSize, gridSize, gridSize);
+    }
+}
+
 // Load and process the uploaded floor plan image
 function loadAndProcessImage(image) {
     const img = new Image();
@@ -125,7 +136,7 @@ canvas.addEventListener("mousemove", (e) => {
         let current = toGrid(e.offsetX, e.offsetY);
         ctx.moveTo(start.col * gridSize + gridSize / 2, start.row * gridSize + gridSize / 2);
         ctx.lineTo(current.col * gridSize + gridSize / 2, current.row * gridSize + gridSize / 2);
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = cursorMode === 'draw' ? "black" : "white";
         ctx.lineWidth = 1;
         ctx.stroke();
     }
@@ -136,7 +147,6 @@ canvas.addEventListener("mouseup", (e) => {
         let start = toGrid(startX, startY);
         let end = toGrid(e.offsetX, e.offsetY);
 
-        // Vykreslení stěny podél celé cesty
         let deltaX = Math.abs(end.col - start.col);
         let deltaY = Math.abs(end.row - start.row);
         let signX = start.col < end.col ? 1 : -1;
@@ -145,7 +155,11 @@ canvas.addEventListener("mouseup", (e) => {
         let err = deltaX - deltaY;
 
         while (true) {
-            addWallToGrid(start.col * gridSize, start.row * gridSize);
+            if (cursorMode === 'draw') {
+                addWallToGrid(start.col * gridSize, start.row * gridSize);
+            } else if (cursorMode === 'erase') {
+                removeWallFromGrid(start.col * gridSize, start.row * gridSize);
+            }
 
             if (start.col === end.col && start.row === end.row) break;
             let err2 = 2 * err;
@@ -309,6 +323,20 @@ document.getElementById('planFiber').addEventListener('click', () => {
     } else {
         alert("Nastavte začátek a konec vlákna.");
     }
+});
+
+// Draw button event
+document.getElementById('drawPointer').addEventListener('click', () => {
+    cursorMode = 'draw';
+    document.getElementById('currentCursor').textContent = 'Kresba';
+    canvas.style.cursor = 'crosshair';
+});
+
+// Erase button event
+document.getElementById('erasePointer').addEventListener('click', () => {
+    cursorMode = 'erase';
+    document.getElementById('currentCursor').textContent = 'Mazání';
+    canvas.style.cursor = 'not-allowed';
 });
 
 // Initialize the grid on page load

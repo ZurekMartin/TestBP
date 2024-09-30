@@ -1,4 +1,3 @@
-/* Obecné styly */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
@@ -43,37 +42,39 @@ footer {
 
 .main-container {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 2fr 0.128fr;
     gap: 20px;
     width: 100%;
 }
 
-/* Levý panel s nápovědou */
-.instructions {
+.panel {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.instructions h2 {
+.panel h2 {
     font-size: 1.5rem;
     color: #4CAF50;
 }
 
-.instructions p {
+.panel p {
     font-size: 1rem;
     line-height: 1.6;
     margin: 10px 0;
 }
 
-/* Pravý panel s canvasem a nástroji */
 .canvas-container {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+}
+
+.canvas-container h2 {
+    text-align: center;
 }
 
 canvas {
@@ -97,7 +98,6 @@ canvas {
     cursor: grab;
 }
 
-/* Styl tlačítek algoritmu */
 button {
     padding: 10px 15px;
     border: none;
@@ -109,26 +109,11 @@ button {
 .btn-primary {
     background-color: #4CAF50;
     color: white;
+    margin: 1rem 0;
     width: 100%;
 }
 
 .actions {
     display: flex;
     justify-content: center;
-}
-
-/* Pro mobilní zobrazení */
-@media screen and (max-width: 768px) {
-    .main-container {
-        grid-template-columns: 1fr;
-    }
-
-    .algorithm-buttons {
-        flex-direction: column;
-    }
-
-    .btn-secondary {
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
 }

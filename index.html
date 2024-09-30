@@ -12,7 +12,7 @@
 </header>
 <main>
     <div class="main-container">
-        <section class="instructions">
+        <section class="panel">
             <div id="helpText">
                 <h2>Jak používat:</h2>
                 <p>1. Táhněte myší pro nakreslení stěny na mřížce.</p>
@@ -23,6 +23,7 @@
             </div>
         </section>
         <section class="canvas-container">
+            <h2 id="cursorStyle">Aktuální typ kurzoru: <span id="currentCursor">Kresba</span></h2>
             <canvas id="canvas" width="800" height="600"></canvas>
             <div class="toolbox">
                 <div class="draggable" id="startFiber" draggable="true">Začátek vlákna</div>
@@ -32,6 +33,10 @@
             <div class="actions">
                 <button id="planFiber" class="btn-primary">Naplánovat optické vlákno</button>
             </div>
+        </section>
+        <section class="panel">
+            <button id="drawPointer" class="btn-primary">Kresba</button>
+            <button id="erasePointer" class="btn-primary">Mazání</button>
         </section>
     </div>
 </main>
