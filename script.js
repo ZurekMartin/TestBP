@@ -315,6 +315,12 @@ function redraw() {
     }
 }
 
+// Set default cursor type and update span text when DOM content is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    canvas.style.cursor = 'crosshair';
+    document.getElementById('currentCursor').textContent = 'Kresba';
+});
+
 // Fiber planning button event
 document.getElementById('planFiber').addEventListener('click', () => {
     if (startFiber && endFiber) {
